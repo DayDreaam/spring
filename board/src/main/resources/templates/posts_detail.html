@@ -6,10 +6,27 @@
         <div class="card-body">
             <div class="card-text" style="white-space: pre-line;" th:text="${posts.content}"></div>
             <div class="d-flex justify-content-end">
+				<div th:if="${posts.modifyDate != null}" class="badge bg-light text-dark p-2 text-start mx-3">
+				                <div class="mb-2">modified at</div>
+				                <div th:text="${#temporals.format(posts.modifyDate, 'yyyy-MM-dd HH:mm')}"></div>
+				            </div>
                 <div class="badge bg-light text-dark p-2 text-start">
+					<div class="mb-2">
+						<span th:if="${posts.author != null}" th:text="${posts.author.username}"></span>
+					</div>
                     <div th:text="${#temporals.format(posts.createDate, 'yyyy-MM-dd HH:mm')}"></div>
                 </div>
             </div>
+			<div class="my-3">
+					<a th:href="@{|/posts/modify/${posts.id}|}" class="btn btn-sm btn-outline-secondary"
+					sec:authorize="isAuthenticated()"
+					th:if="${posts.author != null and #authentication.getPrincipal().getUsername() == posts.author.username}"
+					th:text="수정"></a>
+					<a href="javascript:void(0);" th:data-uri="@{|/posts/delete/${posts.id}|}"
+					class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
+					th:if="${posts.author != null and #authentication.getPrincipal().getUsername() == posts.author.username}"
+					th:text="삭제"></a>
+			</div>
         </div>
     </div>
 	
@@ -22,19 +39,47 @@
 	        <div class="card-body">
 	            <div class="card-text" style="white-space: pre-line;" th:text="${comments.content}"></div>
 	            <div class="d-flex justify-content-end">
+					<div th:if="${comments.modifyDate != null}" class="badge bg-light text-dark p-2 text-start mx-3">
+					                <div class="mb-2">modified at</div>
+					                <div th:text="${#temporals.format(comments.modifyDate, 'yyyy-MM-dd HH:mm')}"></div>
+					            </div>
 	                <div class="badge bg-light text-dark p-2 text-start">
+						<div class="mb-2">
+							<span th:if="${comments.author != null}" th:text="${comments.author.username}"></span>
+						</div>
 	                    <div th:text="${#temporals.format(comments.createDate, 'yyyy-MM-dd HH:mm')}"></div>
 	                </div>
 	            </div>
+				<div class="my-3">
+				            <a th:href="@{|/comments/modify/${comments.id}|}" class="btn btn-sm btn-outline-secondary"
+				                sec:authorize="isAuthenticated()"
+				                th:if="${comments.author != null and #authentication.getPrincipal().getUsername() == comments.author.username}"
+				                th:text="수정"></a>
+							<a href="javascript:void(0);" th:data-uri="@{|/comments/delete/${comments.id}|}"
+								class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
+								th:if="${comments.author != null and #authentication.getPrincipal().getUsername() == comments.author.username}"
+								th:text="삭제"></a>
+				        </div>
 	        </div>
 	    </div>
 		<!-- 답변 반복 끝  -->
 		<!-- 답변 작성 -->
 		<form th:action="@{|/comments/create/${posts.id}|}" th:object="${commentsForm}" method="post" class="my-3">
 			<div th:replace="~{form_errors :: formErrorsFragment}"></div>
-			<textarea th:field="*{content}" rows="10" class="form-control"></textarea>
+			<textarea sec:authorize="isAnonymous()" disabled th:field="*{content}" class="form-control" rows="10"></textarea>
+			<textarea sec:authorize="isAuthenticated()" th:field="*{content}" class="form-control" rows="10"></textarea>
 			<input type="submit" value="답변등록" class="btn btn-primary my-2">
 		</form>
 			    
 </div>
+<script layout:fragment="script" type='text/javascript'>
+const delete_elements = document.getElementsByClassName("delete");
+Array.from(delete_elements).forEach(function(element) {
+    element.addEventListener('click', function() {
+        if(confirm("정말로 삭제하시겠습니까?")) {
+            location.href = this.dataset.uri;
+        };
+    });
+});
+</script>
 </html>

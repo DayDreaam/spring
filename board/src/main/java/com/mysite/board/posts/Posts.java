@@ -14,6 +14,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
+import jakarta.persistence.ManyToOne;
+import com.mysite.board.user.WebUser;
+
 
 @Getter
 @Setter
@@ -33,4 +36,9 @@ public class Posts {
     
     @OneToMany(mappedBy = "posts", cascade = CascadeType.REMOVE)
     private List<Comments> commentsList;
+    
+    @ManyToOne
+    private WebUser author;
+    
+    private LocalDateTime modifyDate;
 }

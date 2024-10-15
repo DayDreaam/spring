@@ -3,6 +3,7 @@ package com.mysite.board.comments;
 import java.time.LocalDateTime;
 
 import com.mysite.board.posts.Posts;
+import com.mysite.board.user.WebUser;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,5 +28,10 @@ public class Comments {
     private LocalDateTime createDate; 
     
     @ManyToOne
-    private Posts posts;  
+    private Posts posts;
+    
+    @ManyToOne
+    private WebUser author;
+    
+    private LocalDateTime modifyDate;
 }
